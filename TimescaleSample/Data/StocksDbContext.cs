@@ -2,27 +2,38 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace TimescaleSample.Models;
+namespace TimescaleSample.Data;
 
+//inherits from DBContext
+//DBContext is EF class for making connection to DB
 public class StocksDbContext : DbContext
 {
+
+    //In Entity Framework, the DbSet<T> class is typically used to represent a table in a database.
     public DbSet<Stock> Stocks { get; set; } = default!;
+
+    //default;
+    // For reference types(classes, interfaces, delegates) the default value is null. 
+    //For numeric types(such as int, float, etc.), 
+    // the default value is 0. For bool, it's falsew, and for char, it's '\0'.
+
     public DbSet<Company> Companies { get; set; } = default!;
 
     public IQueryable<IntervalResult> GetWeeklyResults(DateTime value)
     {
-        if (value.Kind != DateTimeKind.Utc) {
+        if (value.Kind != DateTimeKind.Utc)
+        {
             // Read this and cry https://www.npgsql.org/doc/types/datetime.html
             throw new ArgumentException("DateTime.Kind must be of UTC to convert to timestamp with time zone");
         }
-        
+
         return FromExpression(() => GetWeeklyResults(value));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
             .UseNpgsql(connectionString: "Server=localhost;User Id=postgres;Password=password;Database=postgres;")
-            //.LogTo(Console.WriteLine)
+        //.LogTo(Console.WriteLine)
         ;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,7 +75,7 @@ public class Company
     [Key] public string Symbol { get; set; } = "";
     public string Name { get; set; } = "";
 }
- 
+
 /// <summary>
 /// Checkout the last migration to see the PostgreSQL function
 /// 20220726184445_AddGetWeeklyResultsFunction.cs
