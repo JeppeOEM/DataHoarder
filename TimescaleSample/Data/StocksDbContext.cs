@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 //and InverseProperty to specify how properties are mapped to database tables and columns
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace TimescaleSample.Data;
 
@@ -13,8 +14,15 @@ namespace TimescaleSample.Data;
 //DBContext is EF class for making connection to DB
 public class StocksDbContext : DbContext
 {
+    // private IConfiguration _config;
+
+    // public StocksDbContext(IConfiguration config)
+    // {
+    //     _config = config;
+    // }
 
     //In Entity Framework, the DbSet<T> class is typically used to represent a table in a database.
+    // structure is defined in the "schemas" Stock / Company
     public DbSet<Stock> Stocks { get; set; } = default!;
 
     //default;
@@ -35,14 +43,17 @@ public class StocksDbContext : DbContext
         return FromExpression(() => GetWeeklyResults(value));
     }
 
-    //is called by EntityFramework when it needs to create a new instance of DBContextOptionsBuilder
+    //is called by EntityFramework when it needs to create a new instance of DBContextOptionsBuilder AKA when DbContext is called
     //a way to connect
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder
-            .UseNpgsql(connectionString: "Server=localhost;User Id=postgres;Password=password;Database=postgres;")
-        //.LogTo(Console.WriteLine)
-        ;
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
+        => options
+            .UseNpgsql(connectionString: "Server=localhost;User Id=postgres;Password=password;Database=postgres;");
+    // .UseNpgsql(connectionString: _config.GetConnectionString("TimescaleConnection"), options => options.EnableRetryOnFailure());
 
+    //.LogTo(Console.WriteLine)
+
+
+    //Will map
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // shouldn't be used since we have a method

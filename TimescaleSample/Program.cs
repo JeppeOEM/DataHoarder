@@ -3,6 +3,9 @@ using TimescaleSample.Models;
 using Dapper;
 using System.Diagnostics;
 using TimescaleSample.Data;
+using Microsoft.Extensions.Configuration;
+
+
 
 
 namespace TimescaleSample
@@ -11,6 +14,10 @@ namespace TimescaleSample
     {
         static void Main(string[] args)
         {
+            //returns config, looks for "ConnectionStrings"(dont change) in appsettings.json
+            // IConfiguration config = new ConfigurationBuilder()
+            //     .AddJsonFile("appSettings.json")
+            //     .Build();
 
             var db = new StocksDbContext();
 
