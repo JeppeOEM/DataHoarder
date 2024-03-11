@@ -5,7 +5,7 @@ using System.Diagnostics;
 using TimescaleSample.Data;
 
 
-namespace HelloWorld
+namespace TimescaleSample
 {
     internal class Program
     {
@@ -32,6 +32,33 @@ namespace HelloWorld
                 Day_Volume = 100
             };
 
+
+            // Specify a UTC DateTime for the weekly results query
+            var date = new DateTime(2024, 03, 09, 0, 0, 0, DateTimeKind.Utc);
+
+            // Retrieve the top result for a specific symbol (e.g., "MSFT")
+            var topResult = db.GetWeeklyResults(date).FirstOrDefault(x => x.Symbol == "MSFT");
+
+            if (topResult != null)
+            {
+                Console.WriteLine($"{topResult.Name} ({topResult.Symbol}): {topResult.Start:C} - {topResult.End:C} ~{topResult.Average:C}");
+            }
+            else
+            {
+                Console.WriteLine("No weekly results found for MSFT.");
+            }
+            var functionName = "get_weekly_results";
+            var functionExists = db.Database.ExecuteSqlRaw(
+                "SELECT COUNT(*) FROM information_schema.routines WHERE routine_name = {0}", functionName);
+
+            if (functionExists > 0)
+            {
+                Console.WriteLine($"The database function '{functionName}' exists.");
+            }
+            else
+            {
+                Console.WriteLine($"The database function '{functionName}' does not exist.");
+            }
 
             // DataContextDapper dapper = new DataContextDapper();
 

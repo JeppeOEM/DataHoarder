@@ -1,4 +1,9 @@
+//System.ComponentModel.DataAnnotations; 
+//is a library used for data annotations to define validation rules, specify database constraints
 using System.ComponentModel.DataAnnotations;
+// is used for defining schema information for database entities. 
+//It includes attributes like Table, Column, ForeignKey, DatabaseGenerated, NotMapped, 
+//and InverseProperty to specify how properties are mapped to database tables and columns
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +35,8 @@ public class StocksDbContext : DbContext
         return FromExpression(() => GetWeeklyResults(value));
     }
 
+    //is called by EntityFramework when it needs to create a new instance of DBContextOptionsBuilder
+    //a way to connect
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
             .UseNpgsql(connectionString: "Server=localhost;User Id=postgres;Password=password;Database=postgres;")
